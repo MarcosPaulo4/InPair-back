@@ -16,6 +16,7 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   @UseGuards(LocalAuthGuard)
   login() {
+    console.log('Login endpoint hit');
     // return this.authService.login();
   }
 }
