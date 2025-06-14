@@ -1,8 +1,9 @@
+# Etapa de build
 FROM node:23-alpine AS builder
 
 WORKDIR /usr/src/app
 
-COPY yarn.lock package.json ./
+COPY package.json yarn.lock ./
 
 RUN yarn install
 
