@@ -1,4 +1,5 @@
 import { BadRequestException, Injectable, Logger } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcryptjs';
 import { handleError } from 'src/common/utils/error.utils';
@@ -14,6 +15,7 @@ export class AuthService {
   constructor(
     private readonly userService: UserService,
     private readonly JwtService: JwtService,
+    private readonly configService: ConfigService,
   ) {}
 
   async validateUser(email: string, password: string) {
@@ -34,9 +36,16 @@ export class AuthService {
         name: user.name,
         id: user.id,
       };
-      const access_token = await this.JwtService.signAsync(payloadData);
+      const access_token = await this.JwtService.signAsync(payloadData, {
+        expiresIn: '30m',
+      });
+      const refresh_token = await this.JwtService.signAsync(payloadData, {
+        secret: this.configService.get<string>('JWT_REFRESH_TOKEN'),
+        expiresIn: '15d',
+      });
       return {
         access_token,
+        refresh_token,
         user: {
           id: user.id,
           name: user.name,
@@ -46,6 +55,38 @@ export class AuthService {
       };
     } catch (error) {
       handleError(error, 'Invalid user', this.logger);
+    }
+  }
+
+  async refreshToken(user: UserPayload): Promise<UserToken> {
+    try {
+      const payload: UserPayload = {
+        email: user.email,
+        name: user.name,
+        id: user.id,
+      };
+
+      const new_access_token = await this.JwtService.signAsync(payload, {
+        expiresIn: '30m',
+      });
+
+      const new_refresh_token = await this.JwtService.signAsync(payload, {
+        expiresIn: '15d',
+        secret: this.configService.get<string>('JWT_REFRESH_TOKEN'),
+      });
+
+      return {
+        access_token: new_access_token,
+        refresh_token: new_refresh_token,
+        user: {
+          id: user.id,
+          name: user.name,
+          email: user.email,
+          cep: user.cep,
+        },
+      };
+    } catch (error) {
+      handleError(error, 'Invalid refresh token', this.logger);
     }
   }
 }
