@@ -1,21 +1,13 @@
-import { IsUUID } from 'class-validator';
-import { BaseModel } from 'src/common/enity/base.model';
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { TypeOrmBaseModel } from 'src/common/enity/type-orm-base.model';
+import { Column, Entity } from 'typeorm';
 
 @Entity('users')
-export class User extends BaseModel<User> {
-  @PrimaryGeneratedColumn('uuid')
-  @IsUUID()
-  id: string;
-
+export class User extends TypeOrmBaseModel<User> {
   @Column()
   name: string;
 
   @Column({ unique: true })
   email: string;
-
-  @Column()
-  cep: string;
 
   @Column({})
   password: string;

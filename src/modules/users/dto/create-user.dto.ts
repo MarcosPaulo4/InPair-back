@@ -5,7 +5,6 @@ import {
   Matches,
   MinLength,
 } from 'class-validator';
-import { User } from '../entities/user.entity';
 
 export class CreateUserDto {
   @IsNotEmpty()
@@ -23,18 +22,4 @@ export class CreateUserDto {
     message: 'password too weak',
   })
   password: string;
-
-  @IsNotEmpty()
-  @IsString()
-  @Matches(/^\d{8}$/, { message: 'CEP must be 8 digits' })
-  cep: string;
-
-  static toEntity(dto: CreateUserDto, hashedPassword: string) {
-    return new User({
-      name: dto.name,
-      email: dto.email,
-      password: hashedPassword,
-      cep: dto.cep,
-    });
-  }
 }

@@ -1,29 +1,15 @@
-import * as R from 'ramda';
-import {
-  CreateDateColumn,
-  PrimaryGeneratedColumn,
-  UpdateDateColumn,
-} from 'typeorm';
-
 export abstract class BaseModel<T> {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
-
-  @CreateDateColumn({
-    name: 'created_at',
-    type: 'timestamp',
-  })
-  createdAt: Date;
-
-  @UpdateDateColumn({
-    name: 'updated_at',
-    type: 'timestamp',
-  })
-  updatedAt: Date;
+  id?: string;
+  createdAt?: Date;
+  updatedAt?: Date;
 
   constructor(data?: Partial<T>) {
-    const isNotUndefined = (value: any) => !R.isNil(value);
-    const parseData = R.pickBy(isNotUndefined, data);
-    Object.assign(this, parseData);
+    if (data) {
+      Object.entries(data).forEach(([key, value]) => {
+        if (value !== undefined && value !== null) {
+          (this as any)[key] = value;
+        }
+      });
+    }
   }
 }

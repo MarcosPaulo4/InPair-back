@@ -41,7 +41,7 @@ export class AuthController {
     } = await this.authService.login(user);
     res.cookie('refresh_token', refresh_token, {
       httpOnly: true,
-      secure: this.configService.get<string>('NODE_ENV') === 'production', // mudar para true em prod
+      secure: this.configService.get<string>('NODE_ENV') === 'production',
       sameSite: 'strict',
       maxAge: 1000 * 60 * 60 * 24 * 15,
     });
