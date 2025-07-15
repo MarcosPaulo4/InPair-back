@@ -14,6 +14,10 @@ $ docker compose up
 ```
 ## Run tests
 
+## What is it?
+<h1 align="center">InPair</h1>
+<p>O <strong>InPair</strong> é uma rede social privada criada com foco em estudo de tecnologias, mas que também serve como plataforma real para interação entre membros de um grupo restrito.</p>
+
 ## Tech Stack 
 <ul>    
 <li><strong>Database:</strong> PostgreSQL</li>
