@@ -35,7 +35,7 @@ $ docker compose up
 
 <p>
   <strong>Docker:</strong><br />
-  Contêineres garantem que o ambiente de desenvolvimento seja o mesmo em todas as máquinas. Isso elimina o famoso “na minha máquina funciona” e facilita o deploy em ambientes como Heroku, Render ou servidores próprios.
+  Contêineres garantem que o ambiente de desenvolvimento seja o mesmo em todas as máquinas.
 </p>
 
 <p>
