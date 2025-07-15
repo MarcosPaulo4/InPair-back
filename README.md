@@ -1,5 +1,5 @@
 ## Project
-<h1 align="center">🚀 InPair</h1>
+<h1 align="center">InPair</h1>
 <p align="center">Uma plataforma para conectar pessoas com interesses em comum e promover parcerias de crescimento mútuo.</p>
 
 ## Project setup
