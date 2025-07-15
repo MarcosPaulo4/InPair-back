@@ -8,7 +8,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { Request, Response } from 'express';
+import { Response } from 'express';
 import { CurrentUser } from 'src/common/decorator/current-user.decorator';
 import { IsPublic } from 'src/common/decorator/is-public.decorator';
 import { User } from 'src/modules/users/entities/user.entity';
@@ -45,17 +45,39 @@ export class AuthController {
       sameSite: 'strict',
       maxAge: 1000 * 60 * 60 * 24 * 15,
     });
+    res.cookie('token', access_token, {
+      httpOnly: true,
+      secure: this.configService.get<string>('NODE_ENV') === 'production',
+      sameSite: 'strict',
+      maxAge: 1000 * 60 * 30,
+    });
 
     return {
-      access_token,
       user: userData,
     };
   }
 
   @UseGuards(JwtRefreshGuard)
   @Post('refresh')
-  async refresh(@Req() req: Request, @CurrentUser() user: UserPayload) {
-    return this.authService.refreshToken(user);
+  async refresh(
+    @CurrentUser() user: UserPayload,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    const { access_token, refresh_token } =
+      await this.authService.refreshToken(user);
+
+    res.cookie('refresh_token', refresh_token, {
+      httpOnly: true,
+      secure: this.configService.get<string>('NODE_ENV') === 'production',
+      sameSite: 'strict',
+      maxAge: 1000 * 60 * 60 * 24 * 15,
+    });
+    res.cookie('token', access_token, {
+      httpOnly: true,
+      secure: this.configService.get<string>('NODE_ENV') === 'production',
+      sameSite: 'strict',
+      maxAge: 1000 * 60 * 30,
+    });
   }
 
   @IsPublic()
