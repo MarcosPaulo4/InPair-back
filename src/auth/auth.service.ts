@@ -1,7 +1,13 @@
-import { BadRequestException, Injectable, Logger } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  Logger,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcryptjs';
+import { Response } from 'express';
 import { handleError } from 'src/common/utils/error.utils';
 import { User } from 'src/modules/users/entities/user.entity';
 import { UserService } from 'src/modules/users/user.service';
@@ -46,11 +52,6 @@ export class AuthService {
       return {
         access_token,
         refresh_token,
-        user: {
-          id: user.id,
-          name: user.name,
-          email: user.email,
-        },
       };
     } catch (error) {
       handleError(error, 'Invalid user', this.logger);
@@ -68,7 +69,6 @@ export class AuthService {
       const new_access_token = await this.JwtService.signAsync(payload, {
         expiresIn: '30m',
       });
-
       const new_refresh_token = await this.JwtService.signAsync(payload, {
         expiresIn: '15d',
         secret: this.configService.get<string>('JWT_REFRESH_TOKEN'),
@@ -77,14 +77,47 @@ export class AuthService {
       return {
         access_token: new_access_token,
         refresh_token: new_refresh_token,
-        user: {
-          id: user.id,
-          name: user.name,
-          email: user.email,
-        },
       };
     } catch (error) {
-      handleError(error, 'Invalid refresh token', this.logger);
+      this.logger.error('Invalid refresh token', error?.stack || error);
+      throw new UnauthorizedException('Invalid refresh token');
     }
+  }
+
+  async logout(res: Response) {
+    try {
+      const isProd =
+        this.configService.get<string>('NODE_ENV') === 'production';
+
+      res.clearCookie('refresh_token', {
+        httpOnly: true,
+        secure: isProd,
+        sameSite: isProd ? 'none' : 'lax',
+      });
+      res.clearCookie('token', {
+        httpOnly: true,
+        secure: isProd,
+        sameSite: isProd ? 'none' : 'lax',
+      });
+    } catch (error) {
+      handleError(error, 'error logout', this.logger);
+    }
+  }
+
+  setAuthCookies(res: Response, accessToken: string, refreshToken: string) {
+    const isProd = this.configService.get<string>('NODE_ENV') === 'production';
+    res.cookie('refresh_token', refreshToken, {
+      httpOnly: true,
+      secure: isProd,
+      sameSite: isProd ? 'none' : 'lax',
+      maxAge: 1000 * 60 * 60 * 24 * 15,
+    });
+
+    res.cookie('token', accessToken, {
+      httpOnly: true,
+      secure: isProd,
+      sameSite: isProd ? 'none' : 'lax',
+      maxAge: 1000 * 60 * 30,
+    });
   }
 }

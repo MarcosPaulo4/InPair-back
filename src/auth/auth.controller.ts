@@ -3,7 +3,6 @@ import {
   HttpCode,
   HttpStatus,
   Post,
-  Req,
   Res,
   UseGuards,
 } from '@nestjs/common';
@@ -15,7 +14,6 @@ import { User } from 'src/modules/users/entities/user.entity';
 import { AuthService } from './auth.service';
 import { JwtRefreshGuard } from './guard/jwt-refresh.guard';
 import { LocalAuthGuard } from './guard/local-auth.guard';
-import { AuthRequest } from './models/AuthRequest';
 import { UserPayload } from './models/UserPayload';
 
 @Controller()
@@ -30,34 +28,18 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   @UseGuards(LocalAuthGuard)
   async login(
-    @Req() req: AuthRequest,
     @CurrentUser() user: User,
     @Res({ passthrough: true }) res: Response,
   ) {
-    const {
-      access_token,
-      refresh_token,
-      user: userData,
-    } = await this.authService.login(user);
-    res.cookie('refresh_token', refresh_token, {
-      httpOnly: true,
-      secure: this.configService.get<string>('NODE_ENV') === 'production',
-      sameSite: 'strict',
-      maxAge: 1000 * 60 * 60 * 24 * 15,
-    });
-    res.cookie('token', access_token, {
-      httpOnly: true,
-      secure: this.configService.get<string>('NODE_ENV') === 'production',
-      sameSite: 'strict',
-      maxAge: 1000 * 60 * 30,
-    });
-
+    const { access_token, refresh_token } = await this.authService.login(user);
+    this.authService.setAuthCookies(res, access_token, refresh_token);
     return {
-      user: userData,
+      message: 'Login successful',
     };
   }
 
   @UseGuards(JwtRefreshGuard)
+  @HttpCode(HttpStatus.OK)
   @Post('refresh')
   async refresh(
     @CurrentUser() user: UserPayload,
@@ -66,31 +48,18 @@ export class AuthController {
     const { access_token, refresh_token } =
       await this.authService.refreshToken(user);
 
-    res.cookie('refresh_token', refresh_token, {
-      httpOnly: true,
-      secure: this.configService.get<string>('NODE_ENV') === 'production',
-      sameSite: 'strict',
-      maxAge: 1000 * 60 * 60 * 24 * 15,
-    });
-    res.cookie('token', access_token, {
-      httpOnly: true,
-      secure: this.configService.get<string>('NODE_ENV') === 'production',
-      sameSite: 'strict',
-      maxAge: 1000 * 60 * 30,
-    });
+    this.authService.setAuthCookies(res, access_token, refresh_token);
+
+    return {
+      message: 'Refresh successful',
+    };
   }
 
   @IsPublic()
-  @UseGuards(JwtRefreshGuard)
+  @HttpCode(HttpStatus.OK)
   @Post('logout')
   async logout(@Res({ passthrough: true }) res: Response) {
-    res.clearCookie('refresh_token', {
-      httpOnly: true,
-      secure: this.configService.get<string>('NODE_ENV') !== 'production',
-      sameSite: 'strict',
-    });
-    return {
-      message: 'logout successful',
-    };
+    await this.authService.logout(res);
+    return { message: 'Logged out successfully' };
   }
 }
