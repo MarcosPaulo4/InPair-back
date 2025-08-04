@@ -1,6 +1,7 @@
 import { Body, Controller, Get, Post } from '@nestjs/common';
-import { CurrentUser } from 'src/common/decorator/current-user.decorator';
-import { IsPublic } from 'src/common/decorator/is-public.decorator';
+
+import { CurrentUser } from '../../common/decorator/current-user.decorator';
+import { IsPublic } from '../../common/decorator/is-public.decorator';
 import { CreateUserDto } from './dto/create-user.dto';
 import { User } from './entities/user.entity';
 import { UserService } from './user.service';

@@ -1,5 +1,5 @@
-import { TypeOrmBaseModel } from 'src/common/enity/type-orm-base.model';
 import { Column, Entity } from 'typeorm';
+import { TypeOrmBaseModel } from '../../../common/enity/type-orm-base.model';
 
 @Entity('users')
 export class User extends TypeOrmBaseModel<User> {

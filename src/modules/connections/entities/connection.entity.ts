@@ -1,6 +1,6 @@
-import { TypeOrmBaseModel } from 'src/common/enity/type-orm-base.model';
-import { User } from 'src/modules/users/entities/user.entity';
 import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
+import { TypeOrmBaseModel } from '../../../common/enity/type-orm-base.model';
+import { User } from '../../users/entities/user.entity';
 import { ConnectionStatusEnum } from '../enum/connection-status.enum';
 
 @Entity('connection')

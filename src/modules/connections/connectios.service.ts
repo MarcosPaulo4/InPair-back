@@ -5,10 +5,11 @@ import {
   Logger,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { PaginationDto } from 'src/common/dto/pagination.dto';
-import { handleError } from 'src/common/utils/error.utils';
-import { paginatedQueryBuilder } from 'src/common/utils/pagination.utils';
+
 import { Repository } from 'typeorm';
+import { PaginationDto } from '../../common/dto/pagination.dto';
+import { handleError } from '../../common/utils/error.utils';
+import { paginatedQueryBuilder } from '../../common/utils/pagination.utils';
 import { CreateConnectionDto } from './dto/create-connection.dto';
 import { UpdateConnectionDto } from './dto/update-connection.dto';
 import { Connection } from './entities/connection.entity';

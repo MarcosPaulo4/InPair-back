@@ -8,9 +8,10 @@ import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcryptjs';
 import { Response } from 'express';
-import { handleError } from 'src/common/utils/error.utils';
-import { User } from 'src/modules/users/entities/user.entity';
-import { UserService } from 'src/modules/users/user.service';
+
+import { handleError } from '../common/utils/error.utils';
+import { User } from '../modules/users/entities/user.entity';
+import { UserService } from '../modules/users/user.service';
 import { UserPayload } from './models/UserPayload';
 import { UserToken } from './models/UserToken';
 

@@ -8,9 +8,10 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Response } from 'express';
-import { CurrentUser } from 'src/common/decorator/current-user.decorator';
-import { IsPublic } from 'src/common/decorator/is-public.decorator';
-import { User } from 'src/modules/users/entities/user.entity';
+
+import { CurrentUser } from '../common/decorator/current-user.decorator';
+import { IsPublic } from '../common/decorator/is-public.decorator';
+import { User } from '../modules/users/entities/user.entity';
 import { AuthService } from './auth.service';
 import { JwtRefreshGuard } from './guard/jwt-refresh.guard';
 import { LocalAuthGuard } from './guard/local-auth.guard';

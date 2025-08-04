@@ -1,5 +1,5 @@
 # Etapa de build
-FROM node:23-alpine AS builder
+FROM node:20-alpine AS builder
 
 WORKDIR /usr/src/app
 
@@ -11,13 +11,14 @@ COPY . .
 
 RUN yarn build
 
-FROM node:23-alpine
+# Imagem final
+FROM node:20-alpine
 
 WORKDIR /usr/src/app
 
 COPY --from=builder /usr/src/app/dist ./dist
 COPY --from=builder /usr/src/app/node_modules ./node_modules
-COPY --from=builder /usr/src/app/package.json ./
+COPY --from=builder /usr/src/app/package.json ./ 
 COPY --from=builder /usr/src/app/yarn.lock ./
 
 ENV NODE_ENV=production

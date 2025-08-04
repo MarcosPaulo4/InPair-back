@@ -8,8 +8,9 @@ import {
   Post,
   Query,
 } from '@nestjs/common';
-import { CurrentUser } from 'src/common/decorator/current-user.decorator';
-import { PaginationDto } from 'src/common/dto/pagination.dto';
+
+import { CurrentUser } from '../../common/decorator/current-user.decorator';
+import { PaginationDto } from '../../common/dto/pagination.dto';
 import { User } from '../users/entities/user.entity';
 import { ConnectionService } from './connectios.service';
 import { CreateConnectionDto } from './dto/create-connection.dto';

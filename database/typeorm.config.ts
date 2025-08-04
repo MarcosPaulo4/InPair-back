@@ -15,4 +15,5 @@ export const getTypeOrmConfig = (
   entities: [join(__dirname, '../**/*.entity.{ts,js}')],
   synchronize: true,
   logging: configService.get<string>('NODE_ENV') !== 'production',
+  migrationsRun: true,
 });

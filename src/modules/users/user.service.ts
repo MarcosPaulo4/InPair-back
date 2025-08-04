@@ -1,8 +1,8 @@
 import { ConflictException, Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as bcrypt from 'bcryptjs';
-import { handleError } from 'src/common/utils/error.utils';
 import { Repository } from 'typeorm';
+import { handleError } from '../../common/utils/error.utils';
 import { CreateUserDto } from './dto/create-user.dto';
 import { User } from './entities/user.entity';
 
