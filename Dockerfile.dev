@@ -1,15 +1,23 @@
 FROM node:20
 
+RUN apt-get update && apt-get install -y postgresql-client
+
 WORKDIR /usr/src/app
+
+RUN yarn global add @nestjs/cli typeorm
 
 COPY package.json yarn.lock ./
 
-RUN yarn install
+RUN yarn install --frozen-lockfile
 
 COPY . .
 
-RUN yarn global add @nestjs/cli
+RUN chmod +x wait-for-db.sh
+
+RUN mkdir -p dist && chown -R node:node dist
+
+USER root
 
 EXPOSE 3001
 
-CMD ["yarn", "start:dev"]
+CMD ["./wait-for-db.sh", "db", "yarn", "start:dev"]

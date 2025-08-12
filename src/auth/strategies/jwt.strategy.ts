@@ -18,6 +18,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       ignoreExpiration: false,
       secretOrKey: configService.get<string>('JWT_TOKEN'),
     });
+    console.log('JWT TOKEN', configService.get('JWT_TOKEN'));
   }
 
   async validate(payload: UserPayload): Promise<UserFromJwt> {
