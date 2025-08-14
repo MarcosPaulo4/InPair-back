@@ -1,4 +1,9 @@
-import { ConflictException, Injectable, Logger } from '@nestjs/common';
+import {
+  BadRequestException,
+  ConflictException,
+  Injectable,
+  Logger,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as bcrypt from 'bcryptjs';
 import { Repository } from 'typeorm';
@@ -16,11 +21,11 @@ export class UserService {
   ) {}
 
   async create(createUserDto: CreateUserDto): Promise<User> {
+    const userExists = await this.userAlreadyExists(createUserDto.email);
+    if (userExists) {
+      throw new ConflictException('User with this email already exists');
+    }
     try {
-      const userExists = await this.userAlreadyExists(createUserDto.email);
-      if (userExists) {
-        throw new ConflictException('User with this email already exists');
-      }
       const hashedPassword = await bcrypt.hash(createUserDto.password, 10);
 
       const user = this.userRepository.create({
@@ -31,7 +36,7 @@ export class UserService {
       const { password, ...userWithoutPassword } = savedUser;
       return userWithoutPassword as User;
     } catch (error) {
-      handleError(error, 'Error creating user', this.logger);
+      throw new BadRequestException('Error creating user');
     }
   }
 
