@@ -6,7 +6,6 @@ import {
   Res,
   UseGuards,
 } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
 import { Response } from 'express';
 
 import { CurrentUser } from '../common/decorator/current-user.decorator';
@@ -19,10 +18,7 @@ import { UserPayload } from './models/UserPayload';
 
 @Controller()
 export class AuthController {
-  constructor(
-    private readonly authService: AuthService,
-    private readonly configService: ConfigService,
-  ) {}
+  constructor(private readonly authService: AuthService) {}
 
   @IsPublic()
   @Post('login')

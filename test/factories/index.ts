@@ -6,7 +6,8 @@ import { dataSource } from '../setup';
 
 export const factories = {
   User: (overrides: Partial<User> = {}): Partial<User> => ({
-    name: faker.person.fullName(),
+    name: faker.person.firstName(),
+    surname: faker.person.lastName(),
     email: faker.internet.email(),
     password: 'Teste123',
     ...overrides,

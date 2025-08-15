@@ -18,5 +18,6 @@
   },
   "setupFilesAfterEnv": [
     "./test/setup.ts"
-  ]
+  ],
+  "maxWorkers": 1
 }

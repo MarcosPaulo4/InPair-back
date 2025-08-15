@@ -5,10 +5,10 @@ import { TypeOrmBaseModel } from '../../../common/enity/type-orm-base.model';
 export class User extends TypeOrmBaseModel<User> {
   @Column()
   name: string;
-
+  @Column()
+  surname: string;
   @Column({ unique: true })
   email: string;
-
   @Column({})
   password: string;
 }
