@@ -8,12 +8,14 @@ import { InjectRepository } from '@nestjs/typeorm';
 import * as bcrypt from 'bcryptjs';
 import { Repository } from 'typeorm';
 import { handleError } from '../../common/utils/error.utils';
+import { UploadService } from '../upload/upload.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { User } from './entities/user.entity';
 
 @Injectable()
 export class UserService {
   private readonly logger = new Logger(UserService.name);
+  private readonly uploadService: UploadService;
 
   constructor(
     @InjectRepository(User)
@@ -38,6 +40,23 @@ export class UserService {
     } catch (error) {
       throw new BadRequestException('Error creating user');
     }
+  }
+
+  async saveProfileImg(userId: string, imageUrl: string): Promise<User> {
+    const user = await this.findById(userId);
+    if (!user) {
+      throw new BadRequestException('User not found');
+    }
+
+    user.profileImgUrl = imageUrl;
+    const updatedUser = await this.userRepository.save(user);
+
+    const { password, ...userWithoutPassword } = updatedUser;
+    return userWithoutPassword as User;
+  }
+
+  async getProfileImgUploadUrl(fileType: string) {
+    return this.uploadService.getPressignedUrl(fileType);
   }
 
   async findById(id: string): Promise<User | null> {

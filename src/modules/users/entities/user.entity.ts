@@ -11,4 +11,6 @@ export class User extends TypeOrmBaseModel<User> {
   email: string;
   @Column({})
   password: string;
+  @Column({ nullable: true })
+  profileImgUrl: string;
 }

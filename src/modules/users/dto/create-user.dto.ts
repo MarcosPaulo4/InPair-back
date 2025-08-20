@@ -1,6 +1,7 @@
 import {
   IsEmail,
   IsNotEmpty,
+  IsOptional,
   IsString,
   Matches,
   MinLength,
@@ -23,4 +24,7 @@ export class CreateUserDto {
     message: 'password too weak',
   })
   password: string;
+  @IsString()
+  @IsOptional()
+  profileImgUrl?: string;
 }
