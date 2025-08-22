@@ -1,24 +1,26 @@
 import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { Injectable } from '@nestjs/common';
-import crypto from 'crypto';
-
+import { ConfigService } from '@nestjs/config';
+import * as crypto from 'crypto';
 @Injectable()
 export class UploadService {
+  constructor(private readonly configService: ConfigService) {}
+
   private s3 = new S3Client({
-    region: process.env.BUCKER_REGION,
+    region: this.configService.get('BUCKET_REGION'),
     credentials: {
-      accessKeyId: process.env.ACCESS_KEY,
-      secretAccessKey: process.env.SECRET_ACCESS_KEY,
+      accessKeyId: this.configService.get('ACCESS_KEY'),
+      secretAccessKey: this.configService.get('SECRET_ACCESS_KEY'),
     },
   });
 
   async getPressignedUrl(fileType: string) {
-    const fileName = this.randomImageName(32);
+    const fileName = crypto.randomBytes(32).toString('hex');
 
     const command = new PutObjectCommand({
-      Bucket: process.env.BUCKET_NAME,
-      Key: fileName,
+      Bucket: this.configService.get('BUCKET_NAME'),
+      Key: `profile-images/${fileName}`,
       ContentType: fileType,
     });
 
@@ -26,12 +28,7 @@ export class UploadService {
 
     return {
       uploadUrl: url,
-      finalUrl: `https://${process.env.BUCKET_NAME}.s3.${process.env.BUCKET_REGION}.amazonaws.com/${fileName}`,
+      finalUrl: `https://${this.configService.get('BUCKET_NAME')}.s3.${this.configService.get('BUCKET_REGION')}.amazonaws.com/${fileName}`,
     };
-  }
-
-  private randomImageName(bytes: number): string {
-    const randomString = crypto.randomBytes(bytes).toString('hex');
-    return randomString;
   }
 }

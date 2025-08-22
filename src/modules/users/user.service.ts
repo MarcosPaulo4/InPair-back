@@ -15,11 +15,11 @@ import { User } from './entities/user.entity';
 @Injectable()
 export class UserService {
   private readonly logger = new Logger(UserService.name);
-  private readonly uploadService: UploadService;
 
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
+    private readonly uploadService: UploadService,
   ) {}
 
   async create(createUserDto: CreateUserDto): Promise<User> {

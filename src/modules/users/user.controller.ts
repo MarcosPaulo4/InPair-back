@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Req } from '@nestjs/common';
+import { Body, Controller, Get, Post, Put } from '@nestjs/common';
 
 import { CurrentUser } from '../../common/decorator/current-user.decorator';
 import { IsPublic } from '../../common/decorator/is-public.decorator';
@@ -17,14 +17,13 @@ export class UserController {
     return user;
   }
 
-  @Post('profile-image/url')
+  @Post('profile-img/url')
   async getProfileImageUploadUrl(@Body() body: { fileType: string }) {
     return this.userService.getProfileImgUploadUrl(body.fileType);
   }
 
-  @Post('profile-image/save')
+  @Put('profile-img/save')
   async saveProfileImage(
-    @Req() req,
     @Body() body: { imageUrl: string },
     @CurrentUser() user: User,
   ) {
